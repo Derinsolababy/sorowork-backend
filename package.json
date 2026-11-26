@@ -1,7 +1,7 @@
 {
   "name": "sorowork-backend",
   "version": "1.0.0",
-  "description": "SoroWork backend API — work-to-earn platform on Stellar/Soroban",
+  "description": "SoroWork backend API — community work platform on Stellar/Soroban",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",

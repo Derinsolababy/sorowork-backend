@@ -1,6 +1,6 @@
 # SoroWork Backend
 
-REST API for SoroWork — a decentralized work-to-earn platform on Stellar/Soroban.
+REST API for SoroWork — a platform where communities post real-world tasks (cleanups, repairs, landscaping, maintenance) and workers earn USDC on Stellar/Soroban.
 
 ## Stack
 
@@ -53,23 +53,23 @@ Tokens are obtained via wallet-signature login:
 | POST | `/api/auth/login` | — | Login with wallet signature |
 | GET | `/api/auth/me` | ✓ | Get current user |
 
-### Tasks (Bounties)
+### Tasks (Community Work)
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/api/tasks` | — | List tasks (filter: status, tag, creatorId, communityId) |
-| POST | `/api/tasks` | ✓ | Create a new bounty |
+| POST | `/api/tasks` | ✓ | Post a new community task with USDC reward |
 | GET | `/api/tasks/:id` | — | Get task with submissions |
-| PUT | `/api/tasks/:id` | ✓ | Update task (creator only) |
-| DELETE | `/api/tasks/:id` | ✓ | Cancel task (creator only, OPEN status) |
-| POST | `/api/tasks/:id/assign` | ✓ | Assign contributor (creator only) |
+| PUT | `/api/tasks/:id` | ✓ | Update task (poster only) |
+| DELETE | `/api/tasks/:id` | ✓ | Cancel task (poster only, OPEN status) |
+| POST | `/api/tasks/:id/assign` | ✓ | Assign a worker (poster only) |
 
 ### Submissions
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| POST | `/api/submissions` | ✓ | Submit work for a task |
-| GET | `/api/submissions/task/:taskId` | ✓ | List submissions for task (creator only) |
-| PUT | `/api/submissions/:id/approve` | ✓ | Approve submission (creator only) |
-| PUT | `/api/submissions/:id/reject` | ✓ | Reject submission (creator only) |
+| POST | `/api/submissions` | ✓ | Submit proof of completed work (photos, video, etc.) |
+| GET | `/api/submissions/task/:taskId` | ✓ | List submissions for task (poster only) |
+| PUT | `/api/submissions/:id/approve` | ✓ | Approve submission — releases USDC (poster only) |
+| PUT | `/api/submissions/:id/reject` | ✓ | Reject submission (poster only) |
 
 ### Profiles
 | Method | Path | Auth | Description |
@@ -91,7 +91,7 @@ Tokens are obtained via wallet-signature login:
 | Method | Path | Auth | Description |
 |---|---|---|---|
 | GET | `/api/feed` | — | Paginated activity feed |
-| GET | `/api/leaderboard` | — | Top contributors by reputation (?period=week\|month) |
+| GET | `/api/leaderboard` | — | Top workers by reputation (?period=week\|month) |
 
 ### Notifications
 | Method | Path | Auth | Description |
@@ -120,15 +120,15 @@ The client (Freighter) signs the XDR and submits it to the network. The backend 
 ## Payment Flow
 
 ```
-Creator → POST /tasks (creates DB record + calls buildEscrowTx)
+Community leader → POST /tasks (creates DB record + calls buildEscrowTx)
        ↓
-Client signs XDR + submits to Stellar network
+Client signs XDR + submits to Stellar network (USDC locked in escrow)
        ↓
-Contributor → POST /submissions
+Worker completes the job → POST /submissions (with photo/video proof)
        ↓
-Creator → PUT /submissions/:id/approve
+Community leader → PUT /submissions/:id/approve
        ↓
-On-chain: escrow contract releases USDC to contributor
+On-chain: escrow contract releases USDC to worker
 Backend: reputation +10, notification sent
 ```
 
@@ -136,7 +136,7 @@ Backend: reputation +10, notification sent
 
 See `prisma/schema.prisma` for the full model. Key relations:
 
-- `User` → many `Task` (as creator), many `Submission` (as contributor)
+- `User` → many `Task` (as community leader), many `Submission` (as worker)
 - `Task` → many `Submission`, optional `Community`
 - `Community` → many `Task`, many `CommunityMember`
 - `Notification` → belongs to `User`

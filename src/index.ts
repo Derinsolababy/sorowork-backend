@@ -23,7 +23,13 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
-app.get('/health', (_req, res) => res.json({ status: 'ok', version: '1.0.0' }))
+app.get('/health', (_req, res) => res.json({
+  status: 'ok',
+  version: '1.0.0',
+  uptime: process.uptime(),
+  timestamp: new Date().toISOString(),
+  environment: process.env.NODE_ENV || 'development',
+}))
 
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', taskRoutes)

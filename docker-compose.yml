@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://sorowork:sorowork@db:5432/sorowork
+      JWT_SECRET: change-me-in-production
+      STELLAR_NETWORK: testnet
+      PORT: 3001
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: sorowork
+      POSTGRES_PASSWORD: sorowork
+      POSTGRES_DB: sorowork
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

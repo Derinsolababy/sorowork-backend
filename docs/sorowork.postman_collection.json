@@ -1,0 +1,29 @@
+{
+  "info": {
+    "name": "SoroWork API",
+    "description": "Community work platform API collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001/api" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        { "name": "Register", "request": { "method": "POST", "url": "{{baseUrl}}/auth/register" } },
+        { "name": "Login", "request": { "method": "POST", "url": "{{baseUrl}}/auth/login" } },
+        { "name": "Get Me", "request": { "method": "GET", "url": "{{baseUrl}}/auth/me" } }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        { "name": "List Tasks", "request": { "method": "GET", "url": "{{baseUrl}}/tasks" } },
+        { "name": "Create Task", "request": { "method": "POST", "url": "{{baseUrl}}/tasks" } },
+        { "name": "Get Task", "request": { "method": "GET", "url": "{{baseUrl}}/tasks/:id" } }
+      ]
+    }
+  ]
+}
